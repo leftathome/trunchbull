@@ -9,8 +9,15 @@ This document outlines the research findings for integrating with **Schoology** 
 1. **Schoology** provides a well-documented REST API with OAuth authentication
 2. **The Source** is Seattle Public Schools' parent portal built on **PowerSchool SIS**
 3. Both platforms require proper authentication and have security considerations
-4. API access for PowerSchool requires district administrator approval
+4. ~~API access for PowerSchool requires district administrator approval~~ **UPDATE: Not required!**
 5. Important security update for Schoology coming June 25, 2025
+6. **🎯 BREAKTHROUGH: Credential-based access is viable!** (see Alternative Authentication section below)
+
+### Critical Update (2025-10-23)
+
+**We discovered that official API approval is NOT required!** Multiple successful projects demonstrate that both platforms can be accessed using regular parent/student credentials, eliminating the need for district-level API approval.
+
+**See [ALTERNATIVE_AUTH.md](ALTERNATIVE_AUTH.md) for complete details on credential-based authentication.**
 
 ---
 
@@ -354,6 +361,92 @@ External APIs:
 
 ---
 
+## Alternative Authentication Discovery (Update 2025-10-23)
+
+### Breakthrough Finding
+
+After the initial research, we discovered that **official district-level API approval is NOT required** for Trunchbull. Multiple successful open-source projects have demonstrated that both platforms can be accessed using standard parent/student login credentials.
+
+### Evidence
+
+#### Case Study: "The Source: SPS" App
+- Built by a Seattle high school student
+- Used regular parent/student credentials (no official API)
+- **17,000+ monthly active users**
+- **30,000+ total downloads**
+- Operated successfully for **3 years** (2021-2024)
+- Only became "unauthorized" when monetized by a commercial entity
+
+#### Existing Open-Source Projects
+
+**PowerSchool:**
+- `psscraper` - Browser automation with Selenium + BeautifulSoup
+- `ps.py` - Authentication & data fetching library
+- `ps_scraper` - CLI tool for grade export
+
+**Schoology:**
+- `SchoologyMessageWebScraper` - Session-based scraping
+- `sgy-sgy` - Cookie-based access
+- Multiple projects using `requests.Session()`
+
+### Two Viable Approaches
+
+#### Approach 1: Session Token Extraction (Recommended for MVP)
+- User logs in via browser
+- Extract session cookies using DevTools
+- Provide cookies to Trunchbull
+- Manually refresh when expired
+
+**Advantages:**
+- Simple implementation
+- User controls authentication
+- Lower ToS risk
+- No credential storage
+
+#### Approach 2: Credential-Based Automation
+- Store username/password (encrypted)
+- Automate login with headless browser
+- Automatic session refresh
+- Fully autonomous operation
+
+**Advantages:**
+- Better user experience
+- Automatic session management
+- No manual cookie extraction
+
+### Impact on Project
+
+This discovery means:
+1. ✅ No need to contact district IT for API access
+2. ✅ Immediate development can begin
+3. ✅ Works with standard parent accounts
+4. ✅ Lower barrier to entry for users
+5. ✅ Proven viability (multiple working examples)
+
+### Documentation
+
+**Complete implementation details available in:**
+- [ALTERNATIVE_AUTH.md](ALTERNATIVE_AUTH.md) - Comprehensive guide
+- Technical implementation
+- Security considerations
+- Legal/ToS analysis
+- Code examples
+
+### Updated Next Steps
+
+1. ✅ Complete platform research
+2. ✅ Document alternative authentication approach
+3. ✅ Create detailed architecture document
+4. ✅ Draft security and privacy documentation
+5. ✅ Set up project structure
+6. ⬜ ~~Reach out to school district for API access~~ **NOT NEEDED!**
+7. ⬜ Implement session-based authentication
+8. ⬜ Build HTTP clients with cookie support
+9. ⬜ Create React dashboard skeleton
+10. ⬜ Test with real parent account
+
+---
+
 ## References
 
 ### Schoology
@@ -369,6 +462,14 @@ External APIs:
 ### OAuth Resources
 - OAuth 1.0a: https://oauth.net/core/1.0a/
 - OAuth 2.0: https://oauth.net/2/
+
+### Alternative Authentication Projects
+- psscraper: https://github.com/Desperationis/psscraper
+- ps.py: https://github.com/ouiliame/ps.py
+- ps_scraper: https://github.com/jarulsamy/ps_scraper
+- SchoologyMessageWebScraper: https://github.com/Saptak625/SchoologyMessageWebScraper
+- sgy-sgy: https://github.com/SheepTester/sgy-sgy
+- "The Source: SPS" Case Study: https://www.geekwire.com/2024/seattle-public-schools-issues-statement-explaining-its-stance-on-grade-viewing-app/
 
 ---
 

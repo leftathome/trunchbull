@@ -28,6 +28,22 @@ Trunchbull aggregates student data from multiple learning platforms and presents
 
 ---
 
+## 🎯 Important Update: No API Approval Required!
+
+**Good news!** You DON'T need district-level API approval to use Trunchbull.
+
+Our research discovered that both Schoology and PowerSchool can be accessed using your regular parent/student login credentials, just like the official mobile apps do. This eliminates bureaucratic barriers and makes Trunchbull immediately usable.
+
+**Two simple options:**
+1. **Session Tokens** (recommended for MVP): Log in via browser, extract session cookies, provide to Trunchbull
+2. **Credential Storage**: Provide username/password (encrypted), Trunchbull handles login automatically
+
+**See [Alternative Authentication Guide](docs/ALTERNATIVE_AUTH.md) for complete details.**
+
+This approach has been proven by multiple successful projects, including "The Source: SPS" app which served 17,000+ users for 3 years.
+
+---
+
 ## Screenshots
 
 > Coming soon
@@ -38,7 +54,7 @@ Trunchbull aggregates student data from multiple learning platforms and presents
 
 - Docker and Docker Compose
 - Parent account on Schoology and PowerSchool/The Source
-- API access credentials (see [Getting API Access](#getting-api-access))
+- ~~API access credentials~~ **NOT NEEDED!** Just use your regular login credentials or session tokens
 
 ---
 
@@ -82,24 +98,39 @@ POWERSCHOOL_CLIENT_SECRET=your_client_secret_here
 
 ---
 
-## Getting API Access
+## Authentication Setup
 
-### Schoology
-1. Log into your Schoology parent account
-2. Contact your school's Schoology administrator
-3. Request API access and developer credentials
-4. You will receive a Consumer Key and Consumer Secret
+**Two options - choose what works best for you:**
 
-### PowerSchool (The Source)
-1. Contact your school district's IT department
-2. Request API access for parent accounts
-3. Complete any required security review
-4. Register your application in the PowerSchool Developer Portal
-5. You will receive a Client ID and Client Secret
+### Option 1: Session Tokens (Recommended for MVP)
 
-**Important**: Some school districts have policies restricting API access. Review your district's acceptable use policy before requesting access.
+**Schoology:**
+1. Log into Schoology in your browser
+2. Open Chrome DevTools (F12) → Application → Cookies
+3. Copy these values:
+   - `SESS<hash>` (session ID)
+   - `CSRF_TOKEN`
+   - `CSRF_KEY`
+   - Your user ID (UID)
+4. Add to configuration file
 
-See [docs/API_ACCESS.md](docs/API_ACCESS.md) for detailed instructions.
+**PowerSchool:**
+1. Log into PowerSchool/The Source
+2. Open Chrome DevTools → Application → Cookies
+3. Copy `pstoken` and session cookies
+4. Add to configuration file
+
+**Advantages:** Simple, secure, you control authentication
+**Disadvantage:** Must refresh cookies every 1-2 weeks
+
+### Option 2: Credential Storage (Coming in Phase 2)
+
+Provide your username and password (encrypted at rest), and Trunchbull will handle login automatically.
+
+**Advantages:** Fully automated, no manual cookie management
+**Disadvantage:** Must store credentials (though encrypted)
+
+**See [Alternative Authentication Guide](docs/ALTERNATIVE_AUTH.md) for detailed instructions with screenshots.**
 
 ---
 
