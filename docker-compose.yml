@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  trunchbull:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trunchbull
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+      - ./config:/config
+    environment:
+      - ENV=production
+      - DATABASE_PATH=/data/trunchbull.db
+      - PORT=8080
+      # Schoology configuration
+      - SCHOOLOGY_CONSUMER_KEY=${SCHOOLOGY_CONSUMER_KEY}
+      - SCHOOLOGY_CONSUMER_SECRET=${SCHOOLOGY_CONSUMER_SECRET}
+      - SCHOOLOGY_BASE_URL=${SCHOOLOGY_BASE_URL:-https://api.schoology.com/v1}
+      # PowerSchool configuration
+      - POWERSCHOOL_CLIENT_ID=${POWERSCHOOL_CLIENT_ID}
+      - POWERSCHOOL_CLIENT_SECRET=${POWERSCHOOL_CLIENT_SECRET}
+      - POWERSCHOOL_BASE_URL=${POWERSCHOOL_BASE_URL}
+      # Sync configuration
+      - SYNC_INTERVAL=${SYNC_INTERVAL:-30m}
+      # Cache configuration
+      - CACHE_ENABLED=${CACHE_ENABLED:-true}
+      - CACHE_TTL_ASSIGNMENTS=${CACHE_TTL_ASSIGNMENTS:-15m}
+      - CACHE_TTL_GRADES=${CACHE_TTL_GRADES:-30m}
+      - CACHE_TTL_EVENTS=${CACHE_TTL_EVENTS:-24h}
+      - CACHE_TTL_MESSAGES=${CACHE_TTL_MESSAGES:-10m}
+      # Rate limits
+      - RATE_LIMIT_SCHOOLOGY=${RATE_LIMIT_SCHOOLOGY:-60}
+      - RATE_LIMIT_POWERSCHOOL=${RATE_LIMIT_POWERSCHOOL:-30}
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FORMAT=${LOG_FORMAT:-json}
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - trunchbull-network
+
+networks:
+  trunchbull-network:
+    driver: bridge
+
+volumes:
+  data:
+  config:
