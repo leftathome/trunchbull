@@ -1,0 +1,45 @@
+# Trunchbull Configuration Example
+# Copy this to config.yaml and customize as needed
+# Environment variables take precedence over config file values
+
+server:
+  port: 8080
+  env: development  # development, staging, production
+  read_timeout: 10s
+  write_timeout: 10s
+
+database:
+  path: ./data/trunchbull.db
+  max_open_conns: 10
+  max_idle_conns: 5
+  # encryption_key: ""  # Set via environment variable
+
+schoology:
+  consumer_key: ""  # Set via environment variable
+  consumer_secret: ""  # Set via environment variable
+  base_url: "https://api.schoology.com/v1"
+
+powerschool:
+  client_id: ""  # Set via environment variable
+  client_secret: ""  # Set via environment variable
+  base_url: "https://powerschool.yourdistrict.org"
+
+sync:
+  interval: 30m
+  retry_attempts: 3
+  retry_backoff: exponential  # exponential or linear
+
+cache:
+  enabled: true
+  ttl_assignments: 15m
+  ttl_grades: 30m
+  ttl_events: 24h
+  ttl_messages: 10m
+
+rate_limits:
+  schoology: 60  # requests per minute
+  powerschool: 30  # requests per minute
+
+logging:
+  level: info  # debug, info, warn, error
+  format: text  # text or json
